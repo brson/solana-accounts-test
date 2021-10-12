@@ -58,7 +58,7 @@ pub trait Accounts: Sized {
     fn from_pubkey_list(keys: &[SolanaPubkey]) -> Result<Self, Error> {
         panic!()
     }
-    fn make_constraints(&self) -> AccountConstraints {
+    fn make_constraints() -> AccountConstraints {
         panic!()
     }
 }
