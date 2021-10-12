@@ -80,11 +80,16 @@ impl AccountListConstraints {
     pub fn payer_index(&self) -> usize { 0 }
 }
 
-pub struct AppInstructionAccounts {
-    pub payer: Payer<Pubkey>,
-    pub lib_accounts: LibInstructionAccounts,
-}
 
-pub struct LibInstructionAccounts {
-}
+mod ex {
+    use super::*;
 
+    pub struct AppInstructionAccounts {
+        pub payer: Payer<Pubkey>,
+        pub lib_accounts: LibInstructionAccounts,
+    }
+
+    pub struct LibInstructionAccounts {
+    }
+
+}
