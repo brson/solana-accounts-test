@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use solana_program::pubkey::Pubkey as SolanaPubkey;
 
 
@@ -50,11 +52,20 @@ impl<K> Account for Payer<K> where K: Account {
     fn role_payer(&self) -> bool { true }
 }
 
-pub struct AccountsDesc {
-    pub payer: SolanaPubkey,
+pub type Error = Box<dyn std::error::Error + Send + Sync>;
+
+pub trait Accounts: Sized {
+    fn from_pubkey_list(keys: &[SolanaPubkey]) -> Result<Self, Error> {
+        panic!()
+    }
+    fn make_constraints(&self) -> AccountConstraints {
+        panic!()
+    }
 }
 
+pub struct AccountConstraints(Vec<AccountConstraint>);
 
+pub struct AccountConstraint;
 
 pub struct AppInstructionAccounts {
     pub payer: Payer<Pubkey>,
@@ -63,3 +74,4 @@ pub struct AppInstructionAccounts {
 
 pub struct LibInstructionAccounts {
 }
+
