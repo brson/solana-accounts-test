@@ -28,6 +28,28 @@ impl Account for Pubkey {
     fn role_payer(&self) -> bool { false }
 }
 
+impl<K> Account for Signer<K> where K: Account {
+    fn pubkey(&self) -> SolanaPubkey { self.0.pubkey() }
+    fn owner(&self) -> Option<SolanaPubkey> { self.0.owner() }
+
+    fn signer(&self) -> bool { true }
+    fn writable(&self) -> bool { self.0.writable() }
+    fn executable(&self) -> bool { self.0.executable() }
+
+    fn role_payer(&self) -> bool { self.0.role_payer() }
+}
+
+impl<K> Account for Payer<K> where K: Account {
+    fn pubkey(&self) -> SolanaPubkey { self.0.pubkey() }
+    fn owner(&self) -> Option<SolanaPubkey> { self.0.owner() }
+
+    fn signer(&self) -> bool { self.0.signer() }
+    fn writable(&self) -> bool { self.0.writable() }
+    fn executable(&self) -> bool { self.0.executable() }
+
+    fn role_payer(&self) -> bool { true }
+}
+
 pub struct AccountsDesc {
     pub payer: SolanaPubkey,
 }
