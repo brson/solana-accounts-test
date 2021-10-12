@@ -60,8 +60,8 @@ pub trait Accounts: Sized {
     }
     fn from_pubkey_list(keys: &[SolanaPubkey]) -> Result<Self, Error> {
         let constraints = Self::account_list_constraints();
-        constraints.verify(keys);
-        todo!()
+        constraints.verify(keys)?;
+        Ok(Self::from_payer(keys[constraints.payer_index()]))
     }
     fn account_list_constraints() -> AccountListConstraints {
         panic!()
@@ -76,6 +76,8 @@ impl AccountListConstraints {
     pub fn verify(&self, keys: &[SolanaPubkey]) -> Result<(), Error> {
         panic!()
     }
+
+    pub fn payer_index(&self) -> usize { 0 }
 }
 
 pub struct AppInstructionAccounts {
