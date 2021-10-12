@@ -10,7 +10,7 @@ pub struct Pda<'s>(&'s [&'s [u8]], Exe<Pubkey>);
 
 pub struct Signer<K>(K) where K: Account;
 
-pub struct Writable<K>(K) where K: Account;
+pub struct Mut<K>(K) where K: Account;
 
 pub struct Exe<K>(K) where K: Account;
 
@@ -51,6 +51,28 @@ impl<K> Account for Signer<K> where K: Account {
     fn signer(&self) -> bool { true }
     fn writable(&self) -> bool { self.0.writable() }
     fn executable(&self) -> bool { self.0.executable() }
+
+    fn role_payer(&self) -> bool { self.0.role_payer() }
+}
+
+impl<K> Account for Mut<K> where K: Account {
+    fn pubkey(&self) -> SolanaPubkey { self.0.pubkey() }
+    fn owner(&self) -> Option<SolanaPubkey> { self.0.owner() }
+
+    fn signer(&self) -> bool { self.0.signer() }
+    fn writable(&self) -> bool { true }
+    fn executable(&self) -> bool { self.0.executable() }
+
+    fn role_payer(&self) -> bool { self.0.role_payer() }
+}
+
+impl<K> Account for Exe<K> where K: Account {
+    fn pubkey(&self) -> SolanaPubkey { self.0.pubkey() }
+    fn owner(&self) -> Option<SolanaPubkey> { self.0.owner() }
+
+    fn signer(&self) -> bool { self.0.signer() }
+    fn writable(&self) -> bool { self.0.writable() }
+    fn executable(&self) -> bool { true }
 
     fn role_payer(&self) -> bool { self.0.role_payer() }
 }
@@ -100,9 +122,9 @@ mod ex {
 
     pub struct SetInstructionAccounts {
         pub payer: Payer<Pubkey>,
-        pub storage_ref: Ref<Pubkey>,
-        pub storage: Obj<Pubkey>,
-        pub next_storage: Pubkey,
+        pub storage_ref: Ref<Mut<Pubkey>>,
+        pub storage: Obj<Mut<Pubkey>>,
+        pub next_storage: Mut<Pubkey>,
     }
 
     pub struct LibInstructionAccounts {
