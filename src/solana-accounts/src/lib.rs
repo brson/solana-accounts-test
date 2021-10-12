@@ -55,17 +55,28 @@ impl<K> Account for Payer<K> where K: Account {
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 
 pub trait Accounts: Sized {
-    fn from_pubkey_list(keys: &[SolanaPubkey]) -> Result<Self, Error> {
+    fn from_payer(payer: SolanaPubkey) -> Self {
         panic!()
     }
-    fn make_constraints() -> AccountConstraints {
+    fn from_pubkey_list(keys: &[SolanaPubkey]) -> Result<Self, Error> {
+        let constraints = Self::account_list_constraints();
+        constraints.verify(keys);
+        todo!()
+    }
+    fn account_list_constraints() -> AccountListConstraints {
         panic!()
     }
 }
 
-pub struct AccountConstraints(Vec<AccountConstraint>);
+pub struct AccountListConstraints(Vec<AccountListConstraint>);
 
-pub struct AccountConstraint;
+pub struct AccountListConstraint;
+
+impl AccountListConstraints {
+    pub fn verify(&self, keys: &[SolanaPubkey]) -> Result<(), Error> {
+        panic!()
+    }
+}
 
 pub struct AppInstructionAccounts {
     pub payer: Payer<Pubkey>,
