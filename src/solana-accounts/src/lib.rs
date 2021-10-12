@@ -18,9 +18,9 @@ pub struct Mut<K>(K) where K: Account;
 pub struct Exe<K>(K) where K: Account;
 
 
-pub struct Payer<K>(K) where K: Account;
+pub struct Payer<K>(Signer<K>) where K: Account;
 
-pub struct Ref<K>(K) where K: Account;
+pub struct RefCell<K>(K) where K: Account;
 
 pub struct Obj<K>(K) where K: Account;
 
@@ -80,11 +80,11 @@ impl<K> Account for Exe<K> where K: Account {
     fn role_payer(&self) -> bool { self.0.role_payer() }
 }
 
-impl<K> Account for Payer<K> where K: Account {
+impl<K> Account for Payer<Signer<K>> where K: Account {
     fn pubkey(&self) -> SolanaPubkey { self.0.pubkey() }
     fn owner(&self) -> Option<SolanaPubkey> { self.0.owner() }
 
-    fn signer(&self) -> bool { true } /* payer is a signer */
+    fn signer(&self) -> bool { self.0.signer() }
     fn writable(&self) -> bool { self.0.writable() }
     fn executable(&self) -> bool { self.0.executable() }
 
@@ -125,7 +125,7 @@ mod ex {
 
     pub struct SetInstructionAccounts {
         pub payer: Payer<Pubkey>,
-        pub storage_ref: Ref<Mut<Pubkey>>,
+        pub storage_ref: RefCell<Mut<Pubkey>>,
         pub storage: Obj<Mut<Pubkey>>,
         pub next_storage: Mut<Pubkey>,
     }
