@@ -5,7 +5,15 @@ use solana_program::pubkey::Pubkey as SolanaPubkey;
 
 pub type Pubkey = SolanaPubkey;
 
+pub struct Pda<'s>(&'s [&'s [u8]], Exe<Pubkey>);
+
+
 pub struct Signer<K>(K) where K: Account;
+
+pub struct Writable<K>(K) where K: Account;
+
+pub struct Exe<K>(K) where K: Account;
+
 
 pub struct Payer<K>(K) where K: Account;
 
@@ -13,11 +21,13 @@ pub struct Ref<K>(K) where K: Account;
 
 pub struct Obj<K>(K) where K: Account;
 
+
 pub trait Account {
     fn pubkey(&self) -> SolanaPubkey;
+    fn owner(&self) -> Option<SolanaPubkey>;
+
     fn signer(&self) -> bool;
     fn writable(&self) -> bool;
-    fn owner(&self) -> Option<SolanaPubkey>;
     fn executable(&self) -> bool;
 
     fn role_payer(&self) -> bool;
