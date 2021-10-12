@@ -5,7 +5,10 @@ use solana_program::pubkey::Pubkey as SolanaPubkey;
 
 pub type Pubkey = SolanaPubkey;
 
-pub struct Pda<'s>(&'s [&'s [u8]], Exe<Pubkey>);
+pub struct Pda {
+    static_seeds: &'static [&'static str],
+    program: Exe<Pubkey>
+}
 
 
 pub struct Signer<K>(K) where K: Account;
