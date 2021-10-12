@@ -45,7 +45,7 @@ impl<K> Account for Payer<K> where K: Account {
     fn pubkey(&self) -> SolanaPubkey { self.0.pubkey() }
     fn owner(&self) -> Option<SolanaPubkey> { self.0.owner() }
 
-    fn signer(&self) -> bool { self.0.signer() }
+    fn signer(&self) -> bool { true } /* payer is a signer */
     fn writable(&self) -> bool { self.0.writable() }
     fn executable(&self) -> bool { self.0.executable() }
 
