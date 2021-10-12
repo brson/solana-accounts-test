@@ -9,6 +9,10 @@ pub struct Signer<K>(K) where K: Account;
 
 pub struct Payer<K>(K) where K: Account;
 
+pub struct Ref<K>(K) where K: Account;
+
+pub struct Obj<K>(K) where K: Account;
+
 pub trait Account {
     fn pubkey(&self) -> SolanaPubkey;
     fn signer(&self) -> bool;
@@ -84,9 +88,11 @@ impl AccountListConstraints {
 mod ex {
     use super::*;
 
-    pub struct AppInstructionAccounts {
+    pub struct SetInstructionAccounts {
         pub payer: Payer<Pubkey>,
-        pub lib_accounts: LibInstructionAccounts,
+        pub storage_ref: Ref<Pubkey>,
+        pub storage: Obj<Pubkey>,
+        pub next_storage: Pubkey,
     }
 
     pub struct LibInstructionAccounts {
