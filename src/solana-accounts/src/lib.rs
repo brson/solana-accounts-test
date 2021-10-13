@@ -7,16 +7,19 @@ use variant_count::VariantCount;
 
 pub const MAX_CONSTRAINTS: usize = 10;
 
+#[derive(Copy, Clone)]
 pub enum TypeOrConstraint {
     Type(Type),
     Constraint(Constraint),
 }
 
+#[derive(Copy, Clone)]
 pub enum Type {
     Pubkey,
     PdaString1(&'static str, Pubkey),
 }
 
+#[derive(Copy, Clone)]
 pub enum Constraint {
     Payer,
     Signer,
@@ -26,7 +29,7 @@ pub enum Constraint {
 
 #[repr(usize)]
 #[derive(VariantCount)]
-pub enum AccountIndex {
+pub enum MyAccountIndex {
     Payer,
     StorageRef,
     Storage,
@@ -35,11 +38,11 @@ pub enum AccountIndex {
 
 #[repr(usize)]
 #[derive(VariantCount)]
-pub enum KeyIndex {
+pub enum MyKeyIndex {
     Payer,
 }
 
-pub const fn make_account_list_constraints() -> [(AccountIndex, TypeOrConstraint); 0] {
+pub const fn make_account_list_constraints() -> [(MyAccountIndex, TypeOrConstraint); 0] {
     []
 }
 
@@ -50,6 +53,8 @@ pub const fn check_constraint_well_formedness(
     let mut constraint_index = 0;
 
     loop {
+        let (account_index, constraint) = constraints[constraint_index];
+
         constraint_index += 1;
         if constraint_index >= constraints.len() {
             break;
@@ -60,7 +65,7 @@ pub const fn check_constraint_well_formedness(
 }
 
 pub const fn derive_account_list<const N: usize>(
-    constraints: &[(AccountIndex, Constraint)],
+    constraints: &[(usize, Constraint)],
 ) -> [Pubkey; N] {
     let mut empty = [Pubkey::new_from_array([0; 32]); N];
     empty
