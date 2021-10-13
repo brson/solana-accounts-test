@@ -43,7 +43,7 @@ pub const fn make_account_list_constraints() -> [(AccountIndex, TypeOrConstraint
     []
 }
 
-pub const fn check_constraint_well_formedness(constraints: [(AccountIndex, Typeorconstraint)]) -> bool {
+pub const fn check_constraint_well_formedness(constraints: &[(AccountIndex, TypeOrConstraint)]) -> bool {
     true
 }
 
