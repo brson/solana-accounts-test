@@ -43,6 +43,10 @@ pub const fn make_account_list_constraints() -> [(AccountIndex, TypeOrConstraint
     []
 }
 
+pub const fn check_constraint_well_formedness(constraints: [(AccountIndex, Typeorconstraint)]) -> bool {
+    true
+}
+
 pub const fn derive_account_list<const N: usize>(
     constraints: &[(AccountIndex, Constraint)],
 ) -> [Pubkey; N] {
