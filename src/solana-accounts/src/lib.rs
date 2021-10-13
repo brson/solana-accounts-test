@@ -5,10 +5,7 @@ use solana_program::pubkey::Pubkey as SolanaPubkey;
 
 pub type Pubkey = SolanaPubkey;
 
-pub struct Pda {
-    static_seeds: &'static [&'static str],
-    program: Exe<Pubkey>
-}
+pub struct Pda<const STATIC_SEED_IDX: u8, const PUBKEY_SEED_IDX: u8>(Exe<Pubkey>);
 
 
 pub struct Signer<K>(K) where K: Account;
@@ -122,6 +119,12 @@ impl AccountListConstraints {
 
 mod ex {
     use super::*;
+
+    pub struct SetInstruction {
+    }
+
+    pub struct SetStaticSeeds {
+    }
 
     pub struct SetInstructionAccounts {
         pub payer: Payer<Pubkey>,
