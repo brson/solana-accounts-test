@@ -43,7 +43,19 @@ pub const fn make_account_list_constraints() -> [(AccountIndex, TypeOrConstraint
     []
 }
 
-pub const fn check_constraint_well_formedness(constraints: &[(AccountIndex, TypeOrConstraint)]) -> bool {
+pub const fn check_constraint_well_formedness(
+    constraints: &[(usize, TypeOrConstraint)],
+    num_accounts: usize,
+) -> bool {
+    let mut constraint_index = 0;
+
+    loop {
+        constraint_index += 1;
+        if constraint_index >= constraints.len() {
+            break;
+        }
+    }
+
     true
 }
 
