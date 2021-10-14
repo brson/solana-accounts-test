@@ -33,13 +33,7 @@ pub enum StorageAccountIndex {
     StorageProgram,
 }
 
-#[repr(usize)]
-#[derive(VariantCount)]
-pub enum StorageKeyIndex {
-    Payer,
-}
-
-pub const fn make_my_account_rules() -> [(StorageAccountIndex, Rule); 4] {
+pub const fn make_my_account_rules() -> [(StorageAccountIndex, Rule); 5] {
     [
         (StorageAccountIndex::Payer, Rule::Pubkey),
         (StorageAccountIndex::Payer, Rule::Signer),
@@ -51,7 +45,8 @@ pub const fn make_my_account_rules() -> [(StorageAccountIndex, Rule); 4] {
                 StorageAccountIndex::Key as _,
             ],
             program_account: StorageAccountIndex::StorageProgram as _
-        })
+        }),
+        (StorageAccountIndex::Key, Rule::Pubkey),
     ]
 }
 
@@ -95,6 +90,13 @@ pub const fn check_rules_well_formedness(
     }
 
     true
+}
+
+pub fn verify_accounts(
+    accounts: &[Pubkey],
+    rules: &[(AccountIndex, Rule)],
+) -> bool {
+    panic!()
 }
 
 pub const fn derive_account_list<const N: usize>(
