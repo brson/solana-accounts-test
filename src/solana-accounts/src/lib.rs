@@ -5,10 +5,16 @@ mod oldtry;
 use solana_program::pubkey::Pubkey;
 use variant_count::VariantCount;
 
+pub type AccountIndex = usize;
+
 #[derive(Copy, Clone)]
 pub enum Rule {
     Pubkey,
-    PdaString1(&'static str, Pubkey),
+    Pda {
+        static_seeds: &'static [&'static str],
+        account_seeds: &'static [AccountIndex],
+        program_account: AccountIndex
+    },
 
     Payer,
     Signer,
@@ -18,27 +24,39 @@ pub enum Rule {
 
 #[repr(usize)]
 #[derive(VariantCount)]
-pub enum MyAccountIndex {
+pub enum StorageAccountIndex {
     Payer,
+    Key,
     StorageRef,
     Storage,
     NextStorage,
+    StorageProgram,
 }
 
 #[repr(usize)]
 #[derive(VariantCount)]
-pub enum MyKeyIndex {
+pub enum StorageKeyIndex {
     Payer,
 }
 
-pub const fn make_my_account_rules() -> [(MyAccountIndex, Rule); 1] {
+pub const fn make_my_account_rules() -> [(StorageAccountIndex, Rule); 4] {
     [
-        (MyAccountIndex::Payer, Rule::Pubkey),
+        (StorageAccountIndex::Payer, Rule::Pubkey),
+        (StorageAccountIndex::Payer, Rule::Signer),
+        (StorageAccountIndex::Key, Rule::Pubkey),
+        (StorageAccountIndex::StorageRef, Rule::Pda {
+            static_seeds: &["storage-ref"],
+            account_seeds: &[
+                StorageAccountIndex::Payer as _,
+                StorageAccountIndex::Key as _,
+            ],
+            program_account: StorageAccountIndex::StorageProgram as _
+        })
     ]
 }
 
 pub const fn check_rules_well_formedness(
-    rules: &[(usize, Rule)],
+    rules: &[(AccountIndex, Rule)],
 ) -> bool {
     let mut rule_index = 0;
     let mut current_account_index = 0;
@@ -80,7 +98,7 @@ pub const fn check_rules_well_formedness(
 }
 
 pub const fn derive_account_list<const N: usize>(
-    rules: &[(usize, Rule)],
+    rules: &[(AccountIndex, Rule)],
 ) -> [Pubkey; N] {
     let mut empty = [Pubkey::new_from_array([0; 32]); N];
     empty
