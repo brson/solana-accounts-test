@@ -5,22 +5,11 @@ mod oldtry;
 use solana_program::pubkey::Pubkey;
 use variant_count::VariantCount;
 
-pub const MAX_CONSTRAINTS: usize = 10;
-
 #[derive(Copy, Clone)]
-pub enum TypeOrConstraint {
-    Type(Type),
-    Constraint(Constraint),
-}
-
-#[derive(Copy, Clone)]
-pub enum Type {
+pub enum Rule {
     Pubkey,
     PdaString1(&'static str, Pubkey),
-}
 
-#[derive(Copy, Clone)]
-pub enum Constraint {
     Payer,
     Signer,
     Writable,
@@ -42,23 +31,22 @@ pub enum MyKeyIndex {
     Payer,
 }
 
-pub const fn make_my_account_list_constraints() -> [(MyAccountIndex, TypeOrConstraint); 1] {
+pub const fn make_my_account_rules() -> [(MyAccountIndex, Rule); 1] {
     [
-        (MyAccountIndex::Payer, TypeOrConstraint::Type(Type::Pubkey)),
+        (MyAccountIndex::Payer, Rule::Pubkey),
     ]
 }
 
-pub const fn check_constraint_well_formedness(
-    constraints: &[(usize, TypeOrConstraint)],
-    num_accounts: usize,
+pub const fn check_rules_well_formedness(
+    rules: &[(usize, Rule)],
 ) -> bool {
-    let mut constraint_index = 0;
+    let mut rule_index = 0;
     let mut current_account_index = 0;
 
     loop {
-        let (account_index, constraint) = constraints[constraint_index];
+        let (account_index, rule) = rules[rule_index];
 
-        if constraint_index == 0 {
+        if rule_index == 0 {
             if account_index != 0 {
                 return false;
             }
@@ -69,29 +57,21 @@ pub const fn check_constraint_well_formedness(
         }
 
         if account_index == current_account_index + 1 {
-            match constraint {
-                TypeOrConstraint::Type(_) => {
-                }
-                TypeOrConstraint::Constraint(_) => {
-                    return false;
-                }
+            if rule.is_constraint() {
+                return false;
             }
         }
 
         if account_index == current_account_index {
-            match constraint {
-                TypeOrConstraint::Type(_) => {
-                    return false;
-                }
-                TypeOrConstraint::Constraint(_) => {
-                }
+            if rule.is_type() {
+                return false;
             }
         }
 
         current_account_index = account_index;
 
-        constraint_index += 1;
-        if constraint_index >= constraints.len() {
+        rule_index += 1;
+        if rule_index >= rules.len() {
             break;
         }
     }
@@ -99,9 +79,14 @@ pub const fn check_constraint_well_formedness(
     true
 }
 
-pub fn derive_account_list<const N: usize>(
-    constraints: &[(usize, TypeOrConstraint)],
+pub const fn derive_account_list<const N: usize>(
+    rules: &[(usize, Rule)],
 ) -> [Pubkey; N] {
     let mut empty = [Pubkey::new_from_array([0; 32]); N];
     empty
+}
+
+impl Rule {
+    pub const fn is_type(&self) -> bool { false }
+    pub const fn is_constraint(&self) -> bool { false }
 }
