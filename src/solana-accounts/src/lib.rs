@@ -100,6 +100,7 @@ pub fn verify_accounts(
 }
 
 pub const fn derive_account_list<const N: usize>(
+    root_accounts: &[Pubkey],
     rules: &[(AccountIndex, Rule)],
 ) -> [Pubkey; N] {
     let mut empty = [Pubkey::new_from_array([0; 32]); N];
