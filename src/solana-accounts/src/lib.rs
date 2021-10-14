@@ -42,8 +42,10 @@ pub enum MyKeyIndex {
     Payer,
 }
 
-pub const fn make_my_account_list_constraints() -> [(MyAccountIndex, TypeOrConstraint); 0] {
-    []
+pub const fn make_my_account_list_constraints() -> [(MyAccountIndex, TypeOrConstraint); 1] {
+    [
+        (MyAccountIndex::Payer, TypeOrConstraint::Type(Type::Pubkey)),
+    ]
 }
 
 pub const fn check_constraint_well_formedness(
@@ -97,8 +99,8 @@ pub const fn check_constraint_well_formedness(
     true
 }
 
-pub const fn derive_account_list<const N: usize>(
-    constraints: &[(usize, Constraint)],
+pub fn derive_account_list<const N: usize>(
+    constraints: &[(usize, TypeOrConstraint)],
 ) -> [Pubkey; N] {
     let mut empty = [Pubkey::new_from_array([0; 32]); N];
     empty
