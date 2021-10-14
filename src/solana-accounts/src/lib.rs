@@ -52,7 +52,7 @@ pub const fn make_my_account_rules() -> [(StorageAccountIndex, Rule); 5] {
 
 pub const fn check_rules_well_formedness(
     rules: &[(AccountIndex, Rule)],
-) -> bool {
+) -> Result<(), ()> {
     let mut rule_index = 0;
     let mut current_account_index = 0;
 
@@ -61,23 +61,23 @@ pub const fn check_rules_well_formedness(
 
         if rule_index == 0 {
             if account_index != 0 {
-                return false;
+                return Err(());
             }
         }
 
         if account_index > current_account_index + 1 {
-            return false;
+            return Err(());
         }
 
         if account_index == current_account_index + 1 {
             if rule.is_constraint() {
-                return false;
+                return Err(());
             }
         }
 
         if account_index == current_account_index {
             if rule.is_type() {
-                return false;
+                return Err(());
             }
         }
 
@@ -89,22 +89,28 @@ pub const fn check_rules_well_formedness(
         }
     }
 
-    true
+    Ok(())
 }
 
 pub fn verify_accounts(
     accounts: &[Pubkey],
     rules: &[(AccountIndex, Rule)],
-) -> bool {
-    panic!()
+) -> Result<(), ()> {
+    check_rules_well_formedness(rules)?;
+    panic!();
 }
 
 pub const fn derive_account_list<const N: usize>(
     root_accounts: &[Pubkey],
     rules: &[(AccountIndex, Rule)],
-) -> [Pubkey; N] {
+) -> Result<[Pubkey; N], ()> {
+    if let Err(e) = check_rules_well_formedness(rules) {
+        return Err(e);
+    }
+
     let mut empty = [Pubkey::new_from_array([0; 32]); N];
-    empty
+
+    Ok(empty)
 }
 
 impl Rule {
