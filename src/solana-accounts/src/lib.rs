@@ -33,6 +33,12 @@ pub enum StorageAccountIndex {
     StorageProgram,
 }
 
+impl From<StorageAccountIndex> for usize {
+    fn from(other: StorageAccountIndex) -> usize {
+        other as _
+    }
+}
+
 pub const fn make_my_account_rules() -> [(StorageAccountIndex, Rule); 5] {
     [
         (StorageAccountIndex::Payer, Rule::Pubkey),
@@ -48,6 +54,12 @@ pub const fn make_my_account_rules() -> [(StorageAccountIndex, Rule); 5] {
         }),
         (StorageAccountIndex::Key, Rule::Pubkey),
     ]
+}
+
+pub fn int_account_rules<A, const N: usize>(rules: [(A, Rule); N]) -> [(AccountIndex, Rule); N]
+where A: Into<usize>
+{
+    rules.map(|(a, r)| (a.into(), r))
 }
 
 pub const fn check_rules_well_formedness(
